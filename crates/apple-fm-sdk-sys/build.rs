@@ -7,8 +7,7 @@ fn main() {
     let default_swift_pkg = manifest_dir
         .join("..")
         .join("..")
-        .join("..")
-        .join("python-apple-fm-sdk")
+        .join("vendor")
         .join("foundation-models-c");
     let swift_pkg = env::var("APPLE_FM_SDK_SWIFT_PKG")
         .map(PathBuf::from)
@@ -54,9 +53,7 @@ fn main() {
         .to_string();
 
     println!("cargo:rustc-link-search=native={}", bin_dir);
-    println!("cargo:rustc-link-lib=static=FoundationModelsStatic");
-    println!("cargo:rustc-link-lib=framework=FoundationModels");
-    println!("cargo:rustc-link-lib=framework=Foundation");
+    println!("cargo:rustc-link-lib=dylib=FoundationModels");
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")

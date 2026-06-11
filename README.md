@@ -12,7 +12,7 @@ Rust bindings for Apple's on-device [Foundation Models](https://developer.apple.
 
 - macOS 26+ with Apple Intelligence enabled.
 - Full Xcode 26+ install (`xcode-select` pointing at `Xcode.app`, not just the CLI tools).
-- The sibling `python-apple-fm-sdk` checkout at `../python-apple-fm-sdk`, or set `APPLE_FM_SDK_SWIFT_PKG` to the absolute path of its `foundation-models-c/` directory.
+- The vendored `vendor/foundation-models-c` Swift package included in this repository, or set `APPLE_FM_SDK_SWIFT_PKG` to another compatible `foundation-models-c/` directory.
 
 ## Quick start
 
@@ -39,11 +39,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## Build & run
 
 ```bash
+cd vendor/foundation-models-c
+swift build -c release
+
+cd ../..
 cargo build --workspace
 cargo run --example simple_inference
 cargo run --example streaming_example
 cargo run --example transcript_processing -- path/to/transcript.json
 ```
+
+The Rust examples automatically add an `rpath` to `vendor/foundation-models-c/.build/release`.
+If your Swift package checkout lives elsewhere, set `APPLE_FM_SDK_SWIFT_PKG` to the absolute path
+of that `foundation-models-c` directory before building or running.
 
 ## Status
 
@@ -55,3 +63,9 @@ V1 ships everything from the Python public API except:
 ## License
 
 Apache-2.0
+
+## Third-party code
+
+This repository vendors `vendor/foundation-models-c` from `python-apple-fm-sdk`, which is
+licensed under Apache-2.0. The vendored package retains its original source headers, and a copy of
+the upstream license is included at `vendor/foundation-models-c/LICENSE.md`.

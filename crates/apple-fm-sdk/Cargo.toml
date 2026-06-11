@@ -6,6 +6,7 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Idiomatic Rust bindings for Apple's on-device Foundation Models framework"
+build = "build.rs"
 
 [lib]
 path = "src/lib.rs"
