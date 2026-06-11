@@ -1,7 +1,7 @@
 //! Idiomatic, async Rust bindings for Apple's on-device Foundation Models framework.
 //!
-//! This crate is a Rust port of the `apple_fm_sdk` Python package and links to the
-//! same Swift/C bridge (`FoundationModelsCBindings`) through the [`apple_fm_sdk_sys`] crate.
+//! This crate is a Rust port of the `ringo_fm` Python package and links to the
+//! same Swift/C bridge (`FoundationModelsCBindings`) through the [`ringo_fm_sys`] crate.
 //!
 //! Requires macOS 26+ with Apple Intelligence enabled.
 

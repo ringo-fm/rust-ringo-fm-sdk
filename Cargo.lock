@@ -12,28 +12,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "apple-fm-sdk"
-version = "0.1.0"
-dependencies = [
- "apple-fm-sdk-sys",
- "async-trait",
- "futures-core",
- "futures-util",
- "libc",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
-]
-
-[[package]]
-name = "apple-fm-sdk-sys"
-version = "0.1.0"
-dependencies = [
- "bindgen",
-]
-
-[[package]]
 name = "async-trait"
 version = "0.1.89"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -265,6 +243,28 @@ name = "regex-syntax"
 version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+
+[[package]]
+name = "ringo-fm"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "futures-core",
+ "futures-util",
+ "libc",
+ "ringo-fm-sys",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+]
+
+[[package]]
+name = "ringo-fm-sys"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+]
 
 [[package]]
 name = "rustc-hash"

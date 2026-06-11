@@ -3,7 +3,7 @@
 use std::ffi::{c_char, c_void, CStr, CString};
 use std::sync::Arc;
 
-use apple_fm_sdk_sys as sys;
+use ringo_fm_sys as sys;
 use tokio::sync::oneshot;
 
 use crate::error::{Error, Result};

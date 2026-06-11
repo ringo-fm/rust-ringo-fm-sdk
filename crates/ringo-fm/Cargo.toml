@@ -1,18 +1,19 @@
 [package]
-name = "apple-fm-sdk"
+name = "ringo-fm"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Idiomatic Rust bindings for Apple's on-device Foundation Models framework"
+readme = "../../README.md"
 build = "build.rs"
 
 [lib]
 path = "src/lib.rs"
 
 [dependencies]
-apple-fm-sdk-sys.workspace = true
+ringo-fm-sys.workspace = true
 libc.workspace = true
 thiserror.workspace = true
 serde.workspace = true
@@ -27,12 +28,12 @@ futures-util = "0.3"
 
 [[example]]
 name = "simple_inference"
-path = "../../examples/simple_inference.rs"
+path = "examples/simple_inference.rs"
 
 [[example]]
 name = "streaming_example"
-path = "../../examples/streaming_example.rs"
+path = "examples/streaming_example.rs"
 
 [[example]]
 name = "transcript_processing"
-path = "../../examples/transcript_processing.rs"
+path = "examples/transcript_processing.rs"

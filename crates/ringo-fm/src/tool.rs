@@ -8,7 +8,7 @@
 use std::ffi::{c_char, c_void, CString};
 use std::sync::{Mutex, OnceLock};
 
-use apple_fm_sdk_sys as sys;
+use ringo_fm_sys as sys;
 use async_trait::async_trait;
 use std::collections::HashMap;
 

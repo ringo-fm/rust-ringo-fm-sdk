@@ -1,4 +1,4 @@
-//! Error types matching `apple_fm_sdk.errors`.
+//! Error types matching `ringo_fm.errors`.
 
 use thiserror::Error;
 

@@ -4,7 +4,7 @@
 //! follow-up. Implement manually:
 //!
 //! ```ignore
-//! use apple_fm_sdk::{Generable, GenerationSchema, GenerationSchemaProperty, GeneratedContent, Result};
+//! use ringo_fm::{Generable, GenerationSchema, GenerationSchemaProperty, GeneratedContent, Result};
 //!
 //! struct Person { name: String, age: i32 }
 //!
@@ -18,7 +18,7 @@
 //!     fn from_generated(content: &GeneratedContent) -> Result<Self> {
 //!         Ok(Person {
 //!             name: content.get_property("name")?,
-//!             age: content.get_property("age")?.parse().map_err(|e| apple_fm_sdk::Error::Native(format!("{e}")))?,
+//!             age: content.get_property("age")?.parse().map_err(|e| ringo_fm::Error::Native(format!("{e}")))?,
 //!         })
 //!     }
 //! }

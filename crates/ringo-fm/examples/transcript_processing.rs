@@ -3,7 +3,7 @@
 //! Loads a transcript JSON exported from a Swift app and reports basic stats.
 //! Usage: `cargo run --example transcript_processing -- path/to/transcript.json`
 
-use apple_fm_sdk::{Transcript, TranscriptEntry};
+use ringo_fm::{Transcript, TranscriptEntry};
 use serde_json::Value;
 use std::env;
 use std::fs;

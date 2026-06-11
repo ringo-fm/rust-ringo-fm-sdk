@@ -2,7 +2,7 @@
 
 use std::ffi::CString;
 
-use apple_fm_sdk_sys as sys;
+use ringo_fm_sys as sys;
 
 use crate::error::{Error, Result};
 use crate::handle::{check_error, FmString, ManagedRef};

@@ -7,7 +7,7 @@ use std::ffi::{c_char, c_void, CStr};
 use std::marker::PhantomData;
 use std::ptr::NonNull;
 
-use apple_fm_sdk_sys as sys;
+use ringo_fm_sys as sys;
 
 use crate::error::{Error, Result};
 

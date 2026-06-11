@@ -1,11 +1,12 @@
 [package]
-name = "apple-fm-sdk-sys"
+name = "ringo-fm-sys"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "Raw FFI bindings to Apple's FoundationModels framework via the FoundationModelsCBindings Swift bridge"
+readme = "../../README.md"
 links = "FoundationModelsCBindings"
 
 [lib]

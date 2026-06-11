@@ -8,7 +8,7 @@ use std::ffi::{c_char, c_void};
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-use apple_fm_sdk_sys as sys;
+use ringo_fm_sys as sys;
 use futures_core::Stream;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 

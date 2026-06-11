@@ -5,7 +5,7 @@ fn main() {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let default_swift_pkg = manifest_dir
         .join("..")
-        .join("..")
+        .join("ringo-fm-sys")
         .join("vendor")
         .join("foundation-models-c");
     let swift_pkg = env::var("APPLE_FM_SDK_SWIFT_PKG")

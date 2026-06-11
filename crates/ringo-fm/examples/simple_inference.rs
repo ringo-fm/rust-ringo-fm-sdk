@@ -1,6 +1,6 @@
 //! Simple inference example — Rust port of `examples/simple_inference.py`.
 
-use apple_fm_sdk::{LanguageModelSession, SystemLanguageModel};
+use ringo_fm::{LanguageModelSession, SystemLanguageModel};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

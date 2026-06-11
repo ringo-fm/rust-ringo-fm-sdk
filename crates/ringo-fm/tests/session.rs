@@ -1,7 +1,7 @@
 //! Session lifecycle tests that exercise the native bridge without requiring
 //! model availability (no live inference).
 
-use apple_fm_sdk::LanguageModelSession;
+use ringo_fm::LanguageModelSession;
 
 #[test]
 fn session_default_is_not_responding() {

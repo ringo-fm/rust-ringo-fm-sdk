@@ -4,20 +4,20 @@ Rust bindings for Apple's on-device [Foundation Models](https://developer.apple.
 
 ## Workspace layout
 
-- `crates/apple-fm-sdk-sys` — raw FFI bindings (`bindgen`) to the Swift bridge from `ringo-fm-bridge`.
-- `crates/apple-fm-sdk` — idiomatic, async (`tokio`) wrapper. Public surface mirrors the Python package: `SystemLanguageModel`, `LanguageModelSession`, `Prompt`, `GenerationSchema`, `Tool`, `Transcript`, …
-- `examples/` — Rust ports of the three Python examples.
+- `crates/ringo-fm-sys` — raw FFI bindings (`bindgen`) to the Swift bridge from `ringo-fm-bridge`.
+- `crates/ringo-fm` — idiomatic, async (`tokio`) wrapper. Public surface mirrors the Python package: `SystemLanguageModel`, `LanguageModelSession`, `Prompt`, `GenerationSchema`, `Tool`, `Transcript`, …
+- `crates/ringo-fm/examples/` — Rust ports of the three Python examples.
 
 ## Requirements
 
 - macOS 26+ with Apple Intelligence enabled.
 - Full Xcode 26+ install (`xcode-select` pointing at `Xcode.app`, not just the CLI tools).
-- The vendored `vendor/foundation-models-c` Swift package included in this repository, or set `APPLE_FM_SDK_SWIFT_PKG` to another compatible `foundation-models-c/` directory.
+- The vendored `crates/ringo-fm-sys/vendor/foundation-models-c` Swift package included in this repository, or set `APPLE_FM_SDK_SWIFT_PKG` to another compatible `foundation-models-c/` directory.
 
 ## Quick start
 
 ```rust
-use apple_fm_sdk::{LanguageModelSession, SystemLanguageModel};
+use ringo_fm::{LanguageModelSession, SystemLanguageModel};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -39,17 +39,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 ## Build & run
 
 ```bash
-cd vendor/foundation-models-c
+cd crates/ringo-fm-sys/vendor/foundation-models-c
 swift build -c release
 
-cd ../..
+cd ../../../..
 cargo build --workspace
 cargo run --example simple_inference
 cargo run --example streaming_example
 cargo run --example transcript_processing -- path/to/transcript.json
 ```
 
-The Rust examples automatically add an `rpath` to `vendor/foundation-models-c/.build/release`.
+The Rust examples automatically add an `rpath` to `crates/ringo-fm-sys/vendor/foundation-models-c/.build/release`.
 If your Swift package checkout lives elsewhere, set `APPLE_FM_SDK_SWIFT_PKG` to the absolute path
 of that `foundation-models-c` directory before building or running.
 
@@ -61,12 +61,12 @@ The response includes field candidates, evidence, warnings, metrics, and review
 findings; treat it as a draft for human review, not an approved schema.
 
 ```rust
-use apple_fm_sdk::{
+use ringo_fm::{
     DiscoveryDocument, DiscoveryDocumentSource, DiscoverSchemaRequest,
     DiscoveryOptions, GenerationOptions, LanguageModelSession,
 };
 
-# async fn example() -> apple_fm_sdk::Result<()> {
+# async fn example() -> ringo_fm::Result<()> {
 let session = LanguageModelSession::default()?;
 let response = session.discover_schema(
     DiscoverSchemaRequest {
@@ -102,6 +102,6 @@ Apache-2.0
 
 ## Third-party code
 
-This repository vendors `vendor/foundation-models-c` from `ringo-fm-bridge`, which is
+This repository vendors `crates/ringo-fm-sys/vendor/foundation-models-c` from `ringo-fm-bridge`, which is
 licensed under Apache-2.0. The vendored package retains its original source headers, and a copy of
-the bridge license is included at `vendor/foundation-models-c/LICENSE.md`.
+the bridge license is included at `crates/ringo-fm-sys/vendor/foundation-models-c/LICENSE.md`.

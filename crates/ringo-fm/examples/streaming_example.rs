@@ -2,7 +2,7 @@
 
 use std::io::Write;
 
-use apple_fm_sdk::{LanguageModelSession, SystemLanguageModel};
+use ringo_fm::{LanguageModelSession, SystemLanguageModel};
 use futures_util::StreamExt;
 
 #[tokio::main]
