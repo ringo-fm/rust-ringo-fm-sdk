@@ -22,6 +22,9 @@ tokio.workspace = true
 futures-core.workspace = true
 async-trait.workspace = true
 
+[build-dependencies]
+cc.workspace = true
+
 [dev-dependencies]
 tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 futures-util = "0.3"

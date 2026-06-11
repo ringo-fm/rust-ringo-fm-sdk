@@ -29,5 +29,5 @@ pub use schema::{GenerationGuide, GenerationSchema, GenerationSchemaProperty};
 pub use schema_discovery::*;
 pub use session::LanguageModelSession;
 pub use stream::ResponseStream;
-pub use tool::Tool;
+pub use tool::{Tool, ToolHandle};
 pub use transcript::{Transcript, TranscriptEntry};

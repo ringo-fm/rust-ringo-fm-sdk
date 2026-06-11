@@ -11,6 +11,10 @@ pub(crate) struct SchemaTag;
 pub(crate) struct SchemaPropertyTag;
 
 /// Constraint applied to a [`GenerationSchemaProperty`].
+///
+/// Use the constructor methods (`any_of`, `constant`, `count`, `element`, …)
+/// rather than constructing variants directly. `element(inner)` wraps another
+/// guide so the constraint applies to each element of an array property.
 #[derive(Debug, Clone)]
 pub enum GenerationGuide {
     /// One of a fixed set of values.
@@ -23,6 +27,50 @@ pub enum GenerationGuide {
     Regex { pattern: String, wrapped: bool },
     MinItems(i32),
     MaxItems(i32),
+}
+
+impl GenerationGuide {
+    /// Constrains the property to one of the given values.
+    pub fn any_of(choices: impl IntoIterator<Item = impl Into<String>>) -> Self {
+        Self::AnyOf { choices: choices.into_iter().map(Into::into).collect(), wrapped: false }
+    }
+
+    /// Constrains the property to a single fixed value.
+    pub fn constant(value: impl Into<String>) -> Self {
+        Self::AnyOf { choices: vec![value.into()], wrapped: false }
+    }
+
+    /// Wraps another guide so the constraint applies to each element of an
+    /// array property rather than the array itself. Mirrors Go's `Element(inner)`.
+    pub fn element(inner: GenerationGuide) -> Self {
+        let wrapped = inner.into_wrapped();
+        wrapped
+    }
+
+    /// Exact element count for an array property.
+    pub fn count(n: i32) -> Self { Self::Count { count: n, wrapped: false } }
+
+    pub fn maximum(v: f64) -> Self { Self::Maximum { value: v, wrapped: false } }
+    pub fn minimum(v: f64) -> Self { Self::Minimum { value: v, wrapped: false } }
+    pub fn range(min: f64, max: f64) -> Self { Self::Range { min, max, wrapped: false } }
+    pub fn regex(pattern: impl Into<String>) -> Self {
+        Self::Regex { pattern: pattern.into(), wrapped: false }
+    }
+    pub fn min_items(n: i32) -> Self { Self::MinItems(n) }
+    pub fn max_items(n: i32) -> Self { Self::MaxItems(n) }
+
+    /// Converts this guide into its `wrapped=true` form for use inside an array element.
+    fn into_wrapped(self) -> Self {
+        match self {
+            Self::AnyOf { choices, .. } => Self::AnyOf { choices, wrapped: true },
+            Self::Count { count, .. } => Self::Count { count, wrapped: true },
+            Self::Maximum { value, .. } => Self::Maximum { value, wrapped: true },
+            Self::Minimum { value, .. } => Self::Minimum { value, wrapped: true },
+            Self::Range { min, max, .. } => Self::Range { min, max, wrapped: true },
+            Self::Regex { pattern, .. } => Self::Regex { pattern, wrapped: true },
+            other => other,
+        }
+    }
 }
 
 /// One property of a [`GenerationSchema`].

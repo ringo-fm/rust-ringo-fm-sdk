@@ -12,9 +12,20 @@ fn main() {
         .map(PathBuf::from)
         .unwrap_or(default_swift_pkg);
     let bin_dir = swift_pkg.join(".build").join("release");
+    let header_dir = swift_pkg
+        .join("Sources")
+        .join("FoundationModelsCBindings")
+        .join("include");
 
     println!("cargo:rerun-if-env-changed=APPLE_FM_SDK_SWIFT_PKG");
     println!("cargo:rerun-if-changed={}", swift_pkg.join("Package.swift").display());
+    println!("cargo:rerun-if-changed=src/bridge_rust.c");
+
+    // Compile the per-slot tool trampoline pool.
+    cc::Build::new()
+        .file("src/bridge_rust.c")
+        .include(&header_dir)
+        .compile("ringo_fm_bridge");
 
     let rpath_arg = format!("-Wl,-rpath,{}", bin_dir.display());
     println!("cargo:rustc-link-arg={}", rpath_arg);
