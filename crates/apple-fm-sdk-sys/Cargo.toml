@@ -1,0 +1,15 @@
+[package]
+name = "apple-fm-sdk-sys"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Raw FFI bindings to Apple's FoundationModels framework via the FoundationModelsCBindings Swift bridge"
+links = "FoundationModelsCBindings"
+
+[lib]
+path = "src/lib.rs"
+
+[build-dependencies]
+bindgen = "0.70"

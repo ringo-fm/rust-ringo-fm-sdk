@@ -1,0 +1,37 @@
+[package]
+name = "apple-fm-sdk"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Idiomatic Rust bindings for Apple's on-device Foundation Models framework"
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+apple-fm-sdk-sys.workspace = true
+libc.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+futures-core.workspace = true
+async-trait.workspace = true
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
+futures-util = "0.3"
+
+[[example]]
+name = "simple_inference"
+path = "../../examples/simple_inference.rs"
+
+[[example]]
+name = "streaming_example"
+path = "../../examples/streaming_example.rs"
+
+[[example]]
+name = "transcript_processing"
+path = "../../examples/transcript_processing.rs"
