@@ -80,6 +80,21 @@ impl LanguageModelSession {
         unsafe { sys::FMLanguageModelSessionReset(self.handle.as_ptr()) };
     }
 
+    /// Ask the system to pre-load resources for this session so the first
+    /// request has lower latency. `prompt_prefix`, when provided, is the
+    /// prefix the next prompt is expected to start with. Prewarm is a
+    /// fire-and-forget hint and is safe to call regardless of model
+    /// availability.
+    pub fn prewarm(&self, prompt_prefix: Option<&str>) -> Result<()> {
+        let prefix_c = match prompt_prefix {
+            Some(s) => Some(CString::new(s).map_err(|e| Error::Native(e.to_string()))?),
+            None => None,
+        };
+        let prefix_ptr = prefix_c.as_ref().map_or(std::ptr::null(), |c| c.as_ptr());
+        unsafe { sys::FMLanguageModelSessionPrewarm(self.handle.as_ptr(), prefix_ptr) };
+        Ok(())
+    }
+
     /// One-shot text response.
     pub async fn respond<P: Into<Prompt>>(&self, prompt: P) -> Result<String> {
         self.respond_with(prompt, &GenerationOptions::default()).await
