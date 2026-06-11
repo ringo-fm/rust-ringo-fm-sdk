@@ -184,6 +184,43 @@ impl LanguageModelSession {
         }
     }
 
+    /// Structured response using a raw JSON Schema document.
+    pub async fn respond_with_json_schema<P: Into<Prompt>>(
+        &self,
+        prompt: P,
+        schema_json: &str,
+        options: &GenerationOptions,
+    ) -> Result<GeneratedContent> {
+        let composed = prompt.into().into_composed()?;
+        let schema_c = CString::new(schema_json).map_err(|e| Error::Native(e.to_string()))?;
+        let opts_json = options.to_json()?;
+        let opts_c = match opts_json {
+            Some(s) => Some(CString::new(s).map_err(|e| Error::Native(e.to_string()))?),
+            None => None,
+        };
+        let opts_ptr = opts_c.as_ref().map_or(std::ptr::null(), |c| c.as_ptr());
+
+        let (tx, rx) = oneshot::channel::<Result<GeneratedContent>>();
+        let user_info = Box::into_raw(Box::new(tx)) as *mut c_void;
+
+        let task = unsafe {
+            sys::FMLanguageModelSessionRespondWithSchemaFromJSON(
+                self.handle.as_ptr(),
+                composed.into_raw(),
+                schema_c.as_ptr(),
+                opts_ptr,
+                user_info,
+                Some(structured_trampoline),
+            )
+        };
+        let _cancel = CancelOnDrop::new(task);
+
+        match rx.await {
+            Ok(r) => r,
+            Err(_) => Err(Error::Native("structured response callback dropped".into())),
+        }
+    }
+
     /// Full transcript as JSON.
     pub fn transcript(&self) -> Result<Transcript> {
         let mut code: i32 = 0;

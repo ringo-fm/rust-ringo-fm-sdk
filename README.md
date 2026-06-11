@@ -53,6 +53,42 @@ The Rust examples automatically add an `rpath` to `vendor/foundation-models-c/.b
 If your Swift package checkout lives elsewhere, set `APPLE_FM_SDK_SWIFT_PKG` to the absolute path
 of that `foundation-models-c` directory before building or running.
 
+## Schema Discovery
+
+`LanguageModelSession::discover_schema` uses guided generation to infer a
+reviewable schema candidate from text, JSON, or already-extracted documents.
+The response includes field candidates, evidence, warnings, metrics, and review
+findings; treat it as a draft for human review, not an approved schema.
+
+```rust
+use apple_fm_sdk::{
+    DiscoveryDocument, DiscoveryDocumentSource, DiscoverSchemaRequest,
+    DiscoveryOptions, GenerationOptions, LanguageModelSession,
+};
+
+# async fn example() -> apple_fm_sdk::Result<()> {
+let session = LanguageModelSession::default()?;
+let response = session.discover_schema(
+    DiscoverSchemaRequest {
+        documents: vec![DiscoveryDocument {
+            id: "doc-1".into(),
+            source: DiscoveryDocumentSource {
+                source_type: "text".into(),
+                content: Some("請求日 2026-01-01\n合計 12,000円".into()),
+                ..Default::default()
+            },
+            metadata: None,
+        }],
+        options: Some(DiscoveryOptions::default()),
+        ..Default::default()
+    },
+    &GenerationOptions::default(),
+).await?;
+# let _ = response;
+# Ok(())
+# }
+```
+
 ## Status
 
 V1 ships everything from the Python public API except:
