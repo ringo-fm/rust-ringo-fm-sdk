@@ -83,6 +83,35 @@ public func FMComposedPromptAddAttachment(
   }
 }
 
+@_cdecl("FMComposedPromptAddImage")
+public func FMComposedPromptAddImage(
+  composedPrompt: FMComposedPrompt,
+  imagePath: UnsafePointer<CChar>,
+  error: UnsafeMutablePointer<FMComposedPromptAddImageError>?
+) -> Bool {
+  FMComposedPromptAddAttachment(
+    composedPrompt: composedPrompt,
+    imagePath: imagePath,
+    label: nil,
+    error: error
+  )
+}
+
+@_cdecl("FMComposedPromptAddIdentifiedImage")
+public func FMComposedPromptAddIdentifiedImage(
+  composedPrompt: FMComposedPrompt,
+  imagePath: UnsafePointer<CChar>,
+  imageIdentifier: UnsafePointer<CChar>,
+  error: UnsafeMutablePointer<FMComposedPromptAddImageError>?
+) -> Bool {
+  FMComposedPromptAddAttachment(
+    composedPrompt: composedPrompt,
+    imagePath: imagePath,
+    label: imageIdentifier,
+    error: error
+  )
+}
+
 final class TaskBox {
   let task: Task<(), Never>
   init(_ task: Task<(), Never>) {
@@ -577,6 +606,103 @@ public func FMLanguageModelSessionResponseStreamIterate(
   }
 
   // Store the task in the stream box so it can be cancelled on dealloc
+  streamBox.iterationTask = task
+}
+
+@_cdecl("FMLanguageModelSessionStreamResponseWithSchema")
+public func FMLanguageModelSessionStreamResponseWithSchema(
+  session: FMLanguageModelSessionRef,
+  composedPrompt: FMComposedPrompt,
+  schema: FMGenerationSchemaRef,
+  includeSchemaInPrompt: Bool,
+  optionsJSON: UnsafePointer<CChar>?
+) -> FMLanguageModelSessionResponseStreamRef? {
+  let session = Unmanaged<LanguageModelSession>.fromOpaque(session).takeUnretainedValue()
+  let prompt = Unmanaged<ComposedPrompt>.fromOpaque(composedPrompt).takeUnretainedValue()
+    .promptRepresentation
+  let schemaBuilder = Unmanaged<GenerationSchemaBuilder>.fromOpaque(schema).takeUnretainedValue()
+  let optionsJSONString = optionsJSON.map(String.init(cString:))
+
+  do {
+    let finalSchema = try schemaBuilder.buildSchema()
+    let options = try parseGenerationOptions(from: optionsJSONString)
+    let stream = session.streamResponse(
+      to: prompt,
+      schema: finalSchema,
+      includeSchemaInPrompt: includeSchemaInPrompt,
+      options: options ?? GenerationOptions()
+    )
+    let box = UnsafeSendableResponseStreamBox<GeneratedContent>(stream: stream, session: session)
+    return FMLanguageModelSessionResponseStreamRef(Unmanaged.passRetained(box).toOpaque())
+  } catch {
+    return nil
+  }
+}
+
+@_cdecl("FMLanguageModelSessionStructuredResponseStreamIterate")
+public func FMLanguageModelSessionStructuredResponseStreamIterate(
+  stream: FMLanguageModelSessionResponseStreamRef,
+  userInfo: UnsafeMutableRawPointer?,
+  callback: FMLanguageModelSessionResponseCallback
+) {
+  let streamBox = Unmanaged<UnsafeSendableResponseStreamBox<GeneratedContent>>.fromOpaque(stream)
+    .takeUnretainedValue()
+  let unsafeSendableUserInfo = UnsafeSendableUserInfo(pointer: userInfo)
+
+  let task = Task.detached { [session = streamBox.session, stream = streamBox.stream] in
+    do {
+      try Task.checkCancellation()
+
+      for try await snapshot in stream {
+        try Task.checkCancellation()
+        let json = snapshot.content.jsonString
+        json.withCString { [length = json.utf8.count] cString in
+          callback(
+            StatusCode.success.rawValue,
+            cString,
+            length,
+            unsafeSendableUserInfo.pointer
+          )
+        }
+      }
+
+      callback(
+        StatusCode.success.rawValue,
+        nil,
+        0,
+        unsafeSendableUserInfo.pointer
+      )
+    } catch is CancellationError {
+      let message = "Stream cancelled"
+      callback(
+        StatusCode.unknownError.rawValue,
+        message,
+        message.utf8.count,
+        unsafeSendableUserInfo.pointer
+      )
+    } catch let error as LanguageModelSession.GenerationError {
+      let statusCode = mapGenerationErrorToStatusCode(error)
+      let debugDescription = error.localizedDescription
+      callback(
+        statusCode,
+        debugDescription,
+        debugDescription.utf8.count,
+        unsafeSendableUserInfo.pointer
+      )
+    } catch {
+      let debugDescription = formatErrorDescription(error)
+      callback(
+        StatusCode.unknownError.rawValue,
+        debugDescription,
+        debugDescription.utf8.count,
+        unsafeSendableUserInfo.pointer
+      )
+    }
+
+    _ = session
+    _ = stream
+  }
+
   streamBox.iterationTask = task
 }
 

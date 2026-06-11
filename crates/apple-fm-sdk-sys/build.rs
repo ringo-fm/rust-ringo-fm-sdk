@@ -54,6 +54,7 @@ fn main() {
 
     println!("cargo:rustc-link-search=native={}", bin_dir);
     println!("cargo:rustc-link-lib=dylib=FoundationModels");
+    println!("cargo:rustc-link-arg=-Wl,-rpath,{}", bin_dir);
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")

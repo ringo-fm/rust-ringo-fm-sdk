@@ -1,10 +1,10 @@
 # rust-ringo-fm-sdk
 
-Rust bindings for Apple's on-device [Foundation Models](https://developer.apple.com/documentation/foundationmodels) framework. Ported from [`python-apple-fm-sdk`](../python-apple-fm-sdk).
+Rust bindings for Apple's on-device [Foundation Models](https://developer.apple.com/documentation/foundationmodels) framework.
 
 ## Workspace layout
 
-- `crates/apple-fm-sdk-sys` — raw FFI bindings (`bindgen`) to the Swift bridge from `python-apple-fm-sdk/foundation-models-c`.
+- `crates/apple-fm-sdk-sys` — raw FFI bindings (`bindgen`) to the Swift bridge from `ringo-fm-bridge`.
 - `crates/apple-fm-sdk` — idiomatic, async (`tokio`) wrapper. Public surface mirrors the Python package: `SystemLanguageModel`, `LanguageModelSession`, `Prompt`, `GenerationSchema`, `Tool`, `Transcript`, …
 - `examples/` — Rust ports of the three Python examples.
 
@@ -102,6 +102,6 @@ Apache-2.0
 
 ## Third-party code
 
-This repository vendors `vendor/foundation-models-c` from `python-apple-fm-sdk`, which is
+This repository vendors `vendor/foundation-models-c` from `ringo-fm-bridge`, which is
 licensed under Apache-2.0. The vendored package retains its original source headers, and a copy of
-the upstream license is included at `vendor/foundation-models-c/LICENSE.md`.
+the bridge license is included at `vendor/foundation-models-c/LICENSE.md`.

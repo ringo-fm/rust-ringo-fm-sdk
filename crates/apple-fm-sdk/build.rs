@@ -17,5 +17,6 @@ fn main() {
     println!("cargo:rerun-if-changed={}", swift_pkg.join("Package.swift").display());
 
     let rpath_arg = format!("-Wl,-rpath,{}", bin_dir.display());
+    println!("cargo:rustc-link-arg={}", rpath_arg);
     println!("cargo:rustc-link-arg-examples={}", rpath_arg);
 }
