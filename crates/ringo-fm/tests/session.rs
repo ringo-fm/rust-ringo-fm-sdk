@@ -41,3 +41,16 @@ fn session_reset_is_safe() {
     session.reset();
     assert!(!session.is_responding());
 }
+
+#[test]
+fn session_from_transcript_round_trip() {
+    // Serialise an empty session's transcript and restore it.
+    let orig = LanguageModelSession::default().expect("create default session");
+    let transcript = orig.transcript().expect("get transcript");
+    let json = transcript.to_json().expect("transcript to json");
+    assert!(!json.is_empty());
+
+    let restored = LanguageModelSession::from_transcript(&json, None, Vec::new())
+        .expect("restore session from transcript");
+    assert!(!restored.is_responding());
+}
