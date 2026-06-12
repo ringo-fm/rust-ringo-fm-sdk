@@ -6,20 +6,24 @@
 //! Requires macOS 26+ with Apple Intelligence enabled.
 
 pub mod error;
+pub mod feedback;
+pub mod generable;
+pub mod generated;
 pub(crate) mod handle;
 pub mod model;
-pub mod prompt;
 pub mod options;
+pub mod prompt;
 pub mod schema;
 pub mod schema_discovery;
-pub mod generated;
-pub mod generable;
 pub mod session;
 pub mod stream;
 pub mod tool;
 pub mod transcript;
 
 pub use error::{Error, Result};
+pub use feedback::{
+    FeedbackAttachmentOptions, FeedbackIssue, FeedbackIssueCategory, FeedbackSentiment,
+};
 pub use generable::Generable;
 pub use generated::GeneratedContent;
 pub use model::{Guardrails, SystemLanguageModel, UnavailableReason, UseCase};
