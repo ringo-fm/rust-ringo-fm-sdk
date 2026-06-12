@@ -236,6 +236,13 @@ impl LanguageModelSession {
         }
     }
 
+    /// Number of transcript entries (no JSON parsing).
+    pub fn entry_count(&self) -> usize {
+        unsafe {
+            sys::FMLanguageModelSessionGetTranscriptEntryCount(self.handle.as_ptr()) as usize
+        }
+    }
+
     /// Full transcript as JSON.
     pub fn transcript(&self) -> Result<Transcript> {
         let mut code: i32 = 0;

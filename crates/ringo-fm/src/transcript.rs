@@ -49,6 +49,16 @@ impl Transcript {
         Ok(serde_json::to_string(&self.raw)?)
     }
 
+    /// Number of entries in this transcript.
+    pub fn entry_count(&self) -> usize {
+        self.raw
+            .get("transcript")
+            .and_then(|t| t.get("entries"))
+            .and_then(|e| e.as_array())
+            .map(|a| a.len())
+            .unwrap_or(0)
+    }
+
     /// Parsed entries.
     pub fn entries(&self) -> Vec<TranscriptEntry> {
         self.raw

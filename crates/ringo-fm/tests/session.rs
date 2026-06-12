@@ -43,6 +43,19 @@ fn session_reset_is_safe() {
 }
 
 #[test]
+fn session_entry_count_new_session() {
+    let session = LanguageModelSession::default().expect("create default session");
+    assert_eq!(session.entry_count(), 0);
+}
+
+#[test]
+fn session_transcript_entry_count_via_json() {
+    let session = LanguageModelSession::default().expect("create default session");
+    let transcript = session.transcript().expect("get transcript");
+    assert_eq!(transcript.entry_count(), 0);
+}
+
+#[test]
 fn session_from_transcript_round_trip() {
     // Serialise an empty session's transcript and restore it.
     let orig = LanguageModelSession::default().expect("create default session");
