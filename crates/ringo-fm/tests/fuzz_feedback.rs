@@ -1,4 +1,4 @@
-use ringo_fm::{FeedbackAttachmentOptions, FeedbackIssue, FeedbackIssueCategory, FeedbackSentiment, LanguageModelSession};
+use ringo_fm::{FeedbackAttachmentOptions, FeedbackSentiment, LanguageModelSession};
 
 #[cfg(test)]
 mod feedback_fuzz {
