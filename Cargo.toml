@@ -3,14 +3,14 @@ resolver = "2"
 members = ["crates/ringo-fm-sys", "crates/ringo-fm"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 rust-version = "1.75"
 license = "Apache-2.0"
 repository = "https://github.com/ringo-fm/rust-ringo-fm-sdk"
 
 [workspace.dependencies]
-ringo-fm-sys = { path = "crates/ringo-fm-sys", version = "0.1.0" }
+ringo-fm-sys = { path = "crates/ringo-fm-sys", version = "0.1.1" }
 libc = "0.2"
 thiserror = "1"
 serde = { version = "1", features = ["derive"] }
