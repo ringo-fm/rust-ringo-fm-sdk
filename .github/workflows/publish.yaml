@@ -1,0 +1,63 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CARGO_TERM_COLOR: always
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  publish:
+    runs-on: macos-26
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
+      - uses: swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+
+      - name: Select Xcode 26
+        run: sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Check tag version
+        shell: bash
+        run: |
+          version=$(cargo metadata --no-deps --format-version 1 | jq -r '.workspace_members[0] as $member | .packages[] | select(.id == $member) | .version')
+          tag="${GITHUB_REF_NAME#v}"
+          if [[ "$version" != "$tag" ]]; then
+            echo "Tag v${tag} does not match workspace version ${version}" >&2
+            exit 1
+          fi
+
+      - name: Run tests
+        run: cargo test -p ringo-fm-sys -p ringo-fm --all-features --verbose
+
+      - name: Authenticate with crates.io
+        id: auth
+        uses: rust-lang/crates-io-auth-action@bbd81622f20ce9e2dd9622e3218b975523e45bbe # v1.0.4
+
+      - name: Publish crates
+        shell: bash
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          for package in ringo-fm-sys ringo-fm; do
+            version=$(cargo metadata --no-deps --format-version 1 | jq -r --arg package "$package" '.packages[] | select(.name == $package) | .version')
+            search_result=$(CARGO_TERM_COLOR=never cargo search "$package" --limit 1 || true)
+
+            if echo "$search_result" | grep -E -q "^${package}[[:space:]]*=[[:space:]]*\"${version}\""; then
+              echo "::notice::${package} ${version} is already published. Skipping."
+              continue
+            fi
+
+            cargo publish -p "$package"
+          done
