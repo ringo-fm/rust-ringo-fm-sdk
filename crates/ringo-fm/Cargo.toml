@@ -28,6 +28,7 @@ cc.workspace = true
 [dev-dependencies]
 tokio = { workspace = true, features = ["rt-multi-thread", "macros", "time"] }
 futures-util = "0.3"
+proptest = "1"
 
 [[example]]
 name = "simple_inference"
